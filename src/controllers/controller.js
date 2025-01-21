@@ -1,4 +1,4 @@
-import { RoomModel } from '../models/RoomModel.js'
+import { RoomModel } from '../models/model.js'
 
 export class Controller {
   hello(req, res, next) {
