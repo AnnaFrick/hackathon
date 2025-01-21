@@ -56,4 +56,28 @@ export class Controller {
       next(err)
     }
   }
+
+  async bookRoom (req, res, next) {
+    try {
+      const roomId = req.params.id
+      if (!roomId) {
+        throw new Error('id required')
+      }
+      const room = await RoomModel.findById(roomId)
+      if (room) {
+        if (room.booked) {
+          res
+            .status(400)
+            .json({message: 'room is already booked'})
+        } else {
+          room.booked = true
+          await room.save()
+        }
+      } else {
+        throw new Error('invalid room id')
+      }
+    } catch (err) {
+      next(err)
+    }
+  }
 }
