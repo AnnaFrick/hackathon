@@ -1,6 +1,5 @@
-import { Mongoose, MongooseError } from "mongoose"
+import { MongooseError } from "mongoose"
 import { RoomModel } from "../models/model.js"
-import e from "express"
 
 export class Controller {
   hello(req, res, next) {
