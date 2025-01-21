@@ -72,6 +72,9 @@ export class Controller {
         } else {
           room.booked = true
           await room.save()
+          res
+            .status(200)
+            .json({message: 'room booked'})
         }
       } else {
         throw new Error('invalid room id')
