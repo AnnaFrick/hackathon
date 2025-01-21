@@ -5,3 +5,5 @@ export const router = new Router()
 const c = new Controller()
 
 router.get("/", (req, res, next) => c.hello(req, res, next))
+
+router.get("/rooms", (req, res, next) => c.getRooms(req, res, next))
