@@ -39,4 +39,13 @@ export class Controller {
       next(err)
     }
   }
+
+  async addRoom (req, res, next) {
+    try {
+      const { name, size, startTime, endTime, date } = req.body
+      const roomDocument = await RoomModel.
+    } catch (err) {
+      next(err)
+    }
+  }
 }

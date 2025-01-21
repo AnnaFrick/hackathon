@@ -29,6 +29,9 @@ const schema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid time! Use hh:mm format (e.g., 09:30 or 23:59).`
     }
   },
+  date: {
+    tyoe: string
+  },
   booked: {
     type: Boolean,
     default: false
