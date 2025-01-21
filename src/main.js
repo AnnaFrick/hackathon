@@ -1,3 +1,4 @@
+import cors from "cors"
 import express from "express"
 import { connectToDatabase } from "./config/mongoose.js"
 import { logger } from "./config/logger.js"
@@ -6,12 +7,23 @@ import { router } from "./routes/router.js"
 
 const BASE_URL = "/"
 
+const CORS_OPT = {
+  origin: "*",
+  methods: "*",
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  credentials: true
+}
+
 try {
   // Connect to the database
   await connectToDatabase("mongodb://mongo:27017/app")
 
   // Set up express
   const app = express()
+
+  // Set up Cross-Origin Resource Sharing (CORS)
+  app.use(cors(CORS_OPT))
 
   // Apply Pino HTTP middleware to log all incoming requests and responses
   app.use(pinoHttp({ logger }))

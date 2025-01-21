@@ -12,6 +12,8 @@ router.post("/room", (req, res, next) => c.addRoom(req, res, next))
 
 router.post("/book/:id", (req, res, next) => c.bookRoom(req, res, next))
 
+router.post("/populate", (req, res, next) => c.populate(req, res, next))
+
 // If no other routes are find return 404
 router.use((req, res, next) => {
   res.status(404).json({ message: "Not Found" })
