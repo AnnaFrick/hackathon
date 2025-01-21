@@ -1,38 +1,41 @@
-import mongoose from 'mongoose'
-import { logger } from './winston.js'
+import mongoose from "mongoose"
+import { logger } from "./logger.js"
 
-/**
- * Establishes a connection to a database.
- *
- * @param {string} connectionString - The connection string.
- * @returns {Promise<mongoose.Mongoose>} Resolves to a Mongoose instance if connection succeeded.
- */
-export const connectToDatabase = async (connectionString) => {
+export async function connectToDatabase(connectionString, retries = 10, delay = 6000) {
+  // Set Mongoose options
+  mongoose.set("strict", "throw")
+  mongoose.set("strictQuery", true)
+
   const { connection } = mongoose
 
-  // Will cause errors to be produced instead of dropping the bad data.
-  mongoose.set('strict', 'throw')
+  // Bind connection events for logging
+  connection.on("connected", () => logger.info("Mongoose connected to Mongo"))
+  connection.on("disconnected", () => logger.info("Mongoose disconnected from Mongo"))
+  connection.on("error", (err) => logger.error(`Mongoose connection error: ${err}`))
 
-  // Turn on strict mode for query filters.
-  mongoose.set('strictQuery', true)
+  // Retry logic with controlled attempts
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      logger.info(`Attempting to connect to Mongo (Attempt ${attempt} of ${retries})`)
+      await mongoose.connect(connectionString)
+      logger.info("Successfully connected to Mongo")
+      break // Exit the loop on successful connection
+    } catch (error) {
+      logger.error(`Connection attempt ${attempt} failed: ${error.message}`)
 
-  // Bind connection to events (to get notifications).
-  connection.on('connected', () => logger.info('Mongoose connected to MongoDB.'))
-  connection.on('error', (err) => logger.info(`Mongoose connection error: ${err}`))
-  connection.on('disconnected', () => logger.info('Mongoose disconnected from MongoDB.'))
+      if (attempt > retries) {
+        logger.error("Maximum retry attempts reached. Could not connect to MongoDB.")
+        throw Error("Could not connect to Mongo")
+      }
 
-  // If the Node.js process ends, close the connection.
-  for (const signalEvent of ['SIGINT', 'SIGTERM']) {
-    process.on(signalEvent, () => {
-      (async () => {
-        await connection.close()
-        logger.info(`Mongoose disconnected from MongoDB through ${signalEvent}.`)
-        process.exit(0)
-      })()
-    })
+      logger.info(`Retrying in ${delay / 1000} seconds...`)
+      await new Promise((resolve) => setTimeout(resolve, delay))
+    }
   }
+}
 
-  // Connect to the server.
-  logger.info('Mongoose connecting to MongoDB.')
-  return mongoose.connect(connectionString)
+export function cleanMongooseError(err) {
+  return Object.values(err.errors)
+    .map((o) => o.message)
+    .join("\n")
 }

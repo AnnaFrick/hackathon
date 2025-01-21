@@ -1,73 +1,52 @@
-import "@lnu/json-js-cycle"
-import httpContext from "express-http-context"
 import express from "express"
 import { connectToDatabase } from "./config/mongoose.js"
-import http from "node:http"
-import { logger } from "./config/winston.js"
-import { morganLogger } from "./config/morgan.js"
+import { logger } from "./config/logger.js"
+import { pinoHttp } from "pino-http"
 import { router } from "./routes/router.js"
 
+const BASE_URL = "/"
+
 try {
-  // Connect to MongoDB
-  await connectToDatabase("mongo://mongo:27017/app")
+  // Connect to the database
+  await connectToDatabase("mongodb://mongo:27017/app")
 
-  const BASE_URL = "/"
-
+  // Set up express
   const app = express()
 
-  // Parse requests of the content type application/json.
+  // Apply Pino HTTP middleware to log all incoming requests and responses
+  app.use(pinoHttp({ logger }))
+  logger.info("Pino HTTP logging enabled")
+
+  // Parse JSON bodies
   app.use(express.json())
+  logger.info("JSON body parsing enabled")
 
-  // Add the request-scoped context.
-  // NOTE! Must be placed before any middle that needs access to the context!
-  //       See https://www.npmjs.com/package/express-http-context.
-  app.use(httpContext.middleware)
-
-  // Use a morgan logger.
-  app.use(morganLogger)
-
-  // Register routes.
+  // No trailing forward slash should be added to the path.
+  // Must always start with a forward slash.
+  // Register routes
   app.use(BASE_URL, router)
 
-  // Error handler.
+  // Custom error-handling middleware
   app.use((err, req, res, next) => {
-    logger.error(err.message, { error: err })
-
-    if (process.env.NODE_ENV === "production") {
-      // Ensure a valid status code is set for the error.
-      // If the status code is not provided, default to 500 (Internal Server Error).
-      // This prevents leakage of sensitive error details to the client.
-      if (!err.status) {
-        err.status = 500
-        err.message = http.STATUS_CODES[err.status]
-      }
-
-      // Send only the error message and status code to prevent leakage of
-      // sensitive information.
-      res.status(err.status).json({
-        status: err.status,
-        message: err.message
-      })
-
-      return
+    const statusCode = err.status || 500
+    const errorResponse = {
+      status: statusCode,
+      // Ensures no internal server errors are leaked to the client
+      message: statusCode === 500 ? "Internal Server Error" : err.message
     }
 
-    // ---------------------------------------------------
-    // ⚠️ WARNING: Development Environment Only!
-    //             Detailed error information is provided.
-    // ---------------------------------------------------
+    // Optionally include the stack trace when not in the production mode
+    if (process.env.NODE_ENV !== "production" && err.stack) {
+      errorResponse.stack = err.stack
+    }
 
-    // Deep copies the error object and returns a new object with
-    // enumerable and non-enumrele properties (cyclical structures are handled).
-    const copy = JSON.decycle(err, { includeNonEnumerableProperties: true })
-
-    return res.status(err.status || 500).json(copy)
+    res.status(statusCode).json(errorResponse)
   })
 
-  // Starts the HTTP server listening for connections.
-  const server = app.listen(3000, () => {
-    logger.info(`server: http://localhost:${server.address().port}`)
-  })
+  const port = process.env.PORT || 3000
+  app.listen(port, () => logger.info(`Server running at: http://localhost:${port}${BASE_URL}`))
 } catch (err) {
-  logger.error(err)
+  logger.error(err.message, { error: err })
+  logger.info("Gracefully shutting down due to fatal error...")
+  process.exit(1)
 }

@@ -19,7 +19,7 @@ COPY ./ ./
 
 # Create the log directory,
 # and change the owner of the log directory to the node user
-RUN mkdir -p /var/log/app && chown -R node:node /var/log/app
+RUN touch combined.log && chown node:node combined.log
 
 # Sets the user that the Docker container runs as.
 # In this case, it's set to 'node' to avoid running as root for security reasons.
@@ -33,4 +33,4 @@ EXPOSE 3000
 # a utility that monitors for any changes in the source and automatically restarts the server.
 # The '-e' flag is used to specify the file extensions that nodemon should watch.
 # The '--inspect' flag is used to enable the inspector agent.
-CMD [ "npx", "nodemon", "-e" , "js,json,ejs,html,css", "--inspect", "src/server.js"]
+CMD [ "npx", "nodemon", "-e" , "js,json,ejs,html,css", "--inspect", "src/main.js"]
