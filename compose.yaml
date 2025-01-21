@@ -33,11 +33,11 @@ services:
     # Using ${VAR:-default_value} to set a default value to most variables.
     environment:
       # The port that the application listens to.
-      - PORT=${PORT:-3000}
+      - PORT=${PORT:-4000}
 
     ports:
       # This allows external access to the App-service on the specified port.
-      - "${PORT:-3000}:${PORT:-3000}"
+      - "${PORT:-4000}:${PORT:-4000}"
 
     networks:
       - net

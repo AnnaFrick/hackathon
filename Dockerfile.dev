@@ -27,7 +27,7 @@ USER node
 
 # Exposes a port that the application listens on.
 # The actual port number is provided by the PORT environment variable.
-EXPOSE 3000
+EXPOSE 4000
 
 # Defines the command to start the application. In this case, the application is started with nodemon,
 # a utility that monitors for any changes in the source and automatically restarts the server.

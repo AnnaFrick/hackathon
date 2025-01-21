@@ -8,8 +8,9 @@ const TimesProvider = ({ children }) => {
     const [dates, setDates] = useState([]);
 
     async function fetchTimes() {
-        const response = await fetch("http://localhost:3000/rooms");
+        const response = await fetch("http://localhost:4000/rooms");
         const data = await response.json();
+        console.log(data)
     }
 
     useEffect(() => {

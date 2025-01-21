@@ -43,7 +43,7 @@ try {
     res.status(statusCode).json(errorResponse)
   })
 
-  const port = process.env.PORT || 3000
+  const port = process.env.PORT || 4000
   app.listen(port, () => logger.info(`Server running at: http://localhost:${port}${BASE_URL}`))
 } catch (err) {
   logger.error(err.message, { error: err })
