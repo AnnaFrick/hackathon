@@ -3,6 +3,7 @@ import { connectToDatabase } from "./config/mongoose.js"
 import { logger } from "./config/logger.js"
 import { pinoHttp } from "pino-http"
 import { router } from "./routes/router.js"
+import { RoomModel } from "./models/model.js"
 
 const BASE_URL = "/"
 
