@@ -30,7 +30,8 @@ const schema = new mongoose.Schema({
     }
   },
   date: {
-    tyoe: string
+    type: Date,
+    required: [true, "Date is required"]
   },
   booked: {
     type: Boolean,
