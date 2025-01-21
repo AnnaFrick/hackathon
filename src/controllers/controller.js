@@ -62,32 +62,45 @@ export class Controller {
 
       res.status(201).send({ id: room._id })
     } catch (err) {
-      if (MongooseError.ValidationError) {
+      if (err instanceof MongooseError.ValidationError) {
         res.status(400).json({ error: err.message })
       }
-
       next(err)
     }
   }
 
   async bookRoom(req, res, next) {
     try {
-      const roomId = req.params.id
-      if (!roomId) {
-        throw new Error("id required")
+      const id = req.params?.id
+
+      if (!id) {
+        res.status(400).json({
+          message: "Room ID is required"
+        })
+        return
       }
-      const room = await RoomModel.findById(roomId)
-      if (room) {
-        if (room.booked) {
-          res.status(400).json({ message: "room is already booked" })
-        } else {
-          room.booked = true
-          await room.save()
-          res.status(200).json({ message: "room booked" })
-        }
-      } else {
-        throw new Error("invalid room id")
+
+      const room = await RoomModel.findById(id)
+      if (!room) {
+        res.status(404).json({
+          message: "Room not found"
+        })
+        return
       }
+
+      if (room.booked) {
+        res.status(400).json({
+          message: "Room is already booked"
+        })
+        return
+      }
+
+      room.booked = true
+      await room.save()
+
+      res.status(200).json({
+        message: "Room booked successfully"
+      })
     } catch (err) {
       next(err)
     }
