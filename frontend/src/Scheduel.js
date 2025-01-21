@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { format, addDays, subDays } from "date-fns";
 import { TimesContext } from "./TimesContext";
 
@@ -11,10 +11,7 @@ const Schedule = () => {
     // Generate the three days to show
     const datesToShow = [startDate, addDays(startDate, 1), addDays(startDate, 2)];
 
-    // Get all time slotts from the context, with dates, times and the room
-    useEffect(() => {
-        console.log("Times in scheduel: ", times);
-    }, [times]);
+    const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
 
     const handleTimeClick = (date, time) => {
         setSelectedDate(date);
