@@ -23,4 +23,20 @@ export class Controller {
       next(err)
     }
   }
+
+  async getRoom (req, res, next) {
+    try {
+      const roomName = req.body.room
+      const rooms = (await RoomModel.find( {name: roomName}))
+          .map(room => room.toObject())
+
+      res
+        .status(200)
+        .json({
+          rooms
+        })
+    } catch (err) {
+      next(err)
+    }
+  }
 }
