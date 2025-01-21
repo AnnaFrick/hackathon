@@ -8,7 +8,7 @@ const Book = () => {
             <h2>Välj en tid</h2>
             <DropDownWithCheckboxes />
             <Scheduel />
-            <Button text="Nästa" />
+            <Button text="Nästa" link="/confirmation" />
         </div>
     );
 }

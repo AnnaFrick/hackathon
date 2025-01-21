@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import Book from './Book';
 import Confirmation from './Confirmation';
+import { TimesContext, TimesProvider } from './TimesContext';
 
 const App = () => {
     return (
@@ -16,4 +17,11 @@ const App = () => {
     );
 }
 
-export default App;
+
+export default function AppWrapper() {
+    return (
+        <TimesProvider>
+            <App />
+        </TimesProvider>
+    );
+}
