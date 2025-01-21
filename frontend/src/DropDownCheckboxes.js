@@ -7,6 +7,8 @@ const DropDownWithCheckboxes = () => {
 
     const dropdownRef = useRef(null);
 
+    console.log("hejehje")
+
     useEffect(() => {
         setOptions(["Room1", "Room2", "Room3"]); // Initialize options
     }, []);

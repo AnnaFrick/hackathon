@@ -23,7 +23,7 @@ const Confirmation = ({ time, date }) => {
   const closePopup = () => {
     setIsBooked(false); // Hide the pop-up
   };
-
+console.log("hejehje")
   return (
     <div className="container">
       <h2>Vem bokar?</h2>

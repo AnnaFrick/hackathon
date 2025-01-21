@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, createContext } from "react";
 
 const TimesContext = createContext();
+console.log("hejehje")
 
 const TimesProvider = ({ children }) => {
     const [times, setTimes] = useState([]);
