@@ -8,6 +8,17 @@ networks:
 
 # Specifies the services/instances to be created
 services:
+  mongo:
+    image: mongo:latest
+
+    restart: unless-stopped
+
+    ports:
+      - "27017:27017"
+
+    networks:
+      - net
+
   app:
     # Specifies that Docker should build the image using a "Dockerfile" file in
     # the current directory.
