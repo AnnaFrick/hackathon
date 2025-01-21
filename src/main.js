@@ -18,7 +18,6 @@ try {
   const BASE_URL = process.env.BASE_URL || '/'
 
   const sessionOptions = {
-    store: new RedisStore({ client: redisClient }),
     name: process.env.SESSION_NAME,
     secret: process.env.SESSION_SECRET,
     resave: false,
