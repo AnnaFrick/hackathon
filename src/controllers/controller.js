@@ -1,4 +1,6 @@
+import { Mongoose, MongooseError } from "mongoose"
 import { RoomModel } from "../models/model.js"
+import e from "express"
 
 export class Controller {
   hello(req, res, next) {
@@ -47,10 +49,10 @@ export class Controller {
     }
   }
 
-  async addRoom (req, res, next) {
+  async addRoom(req, res, next) {
     try {
       const { name, size, startTime, endTime, date } = req.body
-      await RoomModel.create({
+      const room = await RoomModel.create({
         name,
         size,
         startTime,
@@ -58,34 +60,33 @@ export class Controller {
         date
       })
 
-      res
-        .status(201)
+      res.status(201).send({ id: room._id })
     } catch (err) {
+      if (MongooseError.ValidationError) {
+        res.status(400).json({ error: err.message })
+      }
+
       next(err)
     }
   }
 
-  async bookRoom (req, res, next) {
+  async bookRoom(req, res, next) {
     try {
       const roomId = req.params.id
       if (!roomId) {
-        throw new Error('id required')
+        throw new Error("id required")
       }
       const room = await RoomModel.findById(roomId)
       if (room) {
         if (room.booked) {
-          res
-            .status(400)
-            .json({message: 'room is already booked'})
+          res.status(400).json({ message: "room is already booked" })
         } else {
           room.booked = true
           await room.save()
-          res
-            .status(200)
-            .json({message: 'room booked'})
+          res.status(200).json({ message: "room booked" })
         }
       } else {
-        throw new Error('invalid room id')
+        throw new Error("invalid room id")
       }
     } catch (err) {
       next(err)
