@@ -1,5 +1,5 @@
-import morgan from 'morgan'
-import { logger } from './winston.js'
+import morgan from "morgan"
+import { logger } from "./winston.js"
 
 /**
  * Get the color code based on the HTTP status code.
@@ -43,7 +43,7 @@ const colorizeStatus = (status) => {
  * @param {object} args - Additional arguments.
  * @returns {string} The formatted status code with color.
  */
-morgan.token('statusColor', (req, res, args) => {
+morgan.token("statusColor", (req, res, args) => {
   // Get the status code if response written.
   const status = res.headersSent || Boolean(res.header) ? res.statusCode : undefined
 
@@ -51,9 +51,7 @@ morgan.token('statusColor', (req, res, args) => {
 })
 
 export const morganLogger = morgan(
-  process.env.LOGGER_MORGAN_FORMAT_ADD_REMOTE?.toLocaleLowerCase() === 'true'
-    ? ':remote-addr :remote-user :method :url HTTP/:http-version :statusColor :res[content-length] - :response-time ms'
-    : ':method :url :statusColor :res[content-length] - :response-time ms',
+  ":remote-addr :remote-user :method :url HTTP/:http-version :statusColor :res[content-length] - :response-time ms",
   {
     stream: {
       /**
