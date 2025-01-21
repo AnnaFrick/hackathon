@@ -1,0 +1,30 @@
+# This is a Docker Compose file used as a default.
+#
+# Specifies the networks to be created
+networks:
+  net:
+    name: net # Important to set a name to the network otherwise a generated name will be used.
+    driver: bridge
+
+# Specifies the services/instances to be created
+services:
+  app:
+    # Specifies that Docker should build the image using a "Dockerfile" file in
+    # the current directory.
+    build:
+      context: .
+
+    restart: unless-stopped
+
+    # Each line under this directive sets a different environment variable.
+    # Using ${VAR:-default_value} to set a default value to most variables.
+    environment:
+      # The port that the application listens to.
+      - PORT=${PORT:-3000}
+
+    ports:
+      # This allows external access to the App-service on the specified port.
+      - "${PORT:-3000}:${PORT:-3000}"
+
+    networks:
+      - net

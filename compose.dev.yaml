@@ -1,0 +1,12 @@
+# It is intended to be used in conjunction with the base "compose.yaml"
+# file to override or extend its service definitions and volumes.
+#
+# Specifies the services/instances to be created
+services:
+  app:
+    # Override the default build context
+    build:
+      dockerfile: Dockerfile.dev
+
+    volumes:
+      - ./src:/usr/src/app/src
