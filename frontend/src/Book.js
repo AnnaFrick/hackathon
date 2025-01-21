@@ -1,12 +1,12 @@
 import Button from './Button';
 import Scheduel from './Scheduel';
-import DropDown from './DropDown';
+import DropDownWithCheckboxes from './DropDownCheckboxes';
 
 const Book = () => {
     return (
         <div>
             <h2>Välj en tid</h2>
-            <DropDown />
+            <DropDownWithCheckboxes />
             <Scheduel />
             <Button text="Nästa" />
         </div>
