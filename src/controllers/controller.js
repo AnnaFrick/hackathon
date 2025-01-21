@@ -42,7 +42,16 @@ export class Controller {
   async addRoom (req, res, next) {
     try {
       const { name, size, startTime, endTime, date } = req.body
-      const roomDocument = await RoomModel.
+      await RoomModel.create({
+        name,
+        size,
+        startTime,
+        endTime,
+        date
+      })
+
+      res
+        .status(201)
     } catch (err) {
       next(err)
     }
